@@ -67,7 +67,7 @@ class ZlSpider(scrapy.Spider):
         item = ZlschoolItem()
         item['link'] = list(map(lambda x: "https:" + x, extract("//p[@class='searchResultJobName']/a[1]/@href")))
         item['job_name'] = extract('//p[@class="searchResultJobName clearfix"]/a/text()')
-        item['city'] = extract(
+        item['place'] = extract(
             "//div[@class='searchResultItemSimple clearfix ']//em[@class='searchResultJobCityval']/text()")
         item['company_name'] = extract(
             "//div[@class='searchResultItemSimple clearfix ']//p[@class='searchResultCompanyname']//text()")

@@ -15,7 +15,7 @@ class ZlschoolItem(scrapy.Item):
     link = scrapy.Field()  # //p[@class='searchResultJobName']/a[1]/@href
     job_name = scrapy.Field()  # //p[@class="searchResultJobName clearfix"]/a/text()
     # salary = scrapy.Field() # 暂无
-    city = scrapy.Field()  # //div[@class='searchResultItemSimple clearfix ']//em[@class='searchResultJobCityval']
+    place = scrapy.Field()  # //div[@class='searchResultItemSimple clearfix ']//em[@class='searchResultJobCityval']
     company_name = scrapy.Field()  # //div[@class='searchResultItemSimple clearfix ']//p[@class='searchResultCompanyname']
     # //p[@class='searchResultCompanyInfodetailed
     company_nuture = scrapy.Field()  # .//em/text() [0]
