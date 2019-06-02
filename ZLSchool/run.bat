@@ -1,1 +1,1 @@
-python entrypoint.py
+python3 entrypoint.py
