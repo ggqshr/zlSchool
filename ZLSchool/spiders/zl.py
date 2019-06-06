@@ -73,11 +73,34 @@ class ZlSpider(scrapy.Spider):
             "//div[@class='searchResultItemSimple clearfix ']//p[@class='searchResultCompanyname']//text()")
         info = response.xpath("//p[@class='searchResultCompanyInfodetailed']")
         info = list(map(lambda x: x.xpath(".//em/text()").extract(), info))
-        item['company_nuture'] = [i[0] for i in info]
-        item['company_size'] = [i[1] for i in info]
-        item['company_industry'] = [i[2] for i in info]
-        item['job_kind'] = [i[3] for i in info]
-        item['job_number'] = [i[4] for i in info]
+        item['company_nuture'] = list()
+        item['company_size'] = list()
+        item['company_industry'] = list()
+        item['job_kind'] = list()
+        item['job_number'] = list()
+        try:
+            for i in info:
+                if len(i) == 3:
+                    item['company_industry'].append(i[0])
+                    item['job_kind'].append(i[1])
+                    item['job_number'].append(i[2])
+                    item['company_nuture'].append("空")
+                    item['company_size'].append("空")
+                elif len(i) == 5:
+                    item['company_nuture'].append(i[0])
+                    item['company_size'].append(i[1])
+                    item['company_industry'].append(i[2])
+                    item['job_kind'].append(i[3])
+                    item['job_number'].append(i[4])
+                else:
+                    item['company_industry'].append("空")
+                    item['job_kind'].append(i[0])
+                    item['job_number'].append(i[1])
+                    item['company_nuture'].append("空")
+                    item['company_size'].append("空")
+        except:
+            from scrapy.shell import inspect_response
+            inspect_response(response, self)
         item['id'] = [base64.b32encode((n + c).encode("utf-8")).decode("utf-8") for n, c in
                       zip(item['job_name'], item['company_name'])]
         all_data = [{key: item[key][index] for key in item.keys()} for index in range(len(item['id']))]
@@ -98,7 +121,8 @@ class ZlSpider(scrapy.Spider):
         company_address = extract("//div[@class='cRightTab mt20']/div[@class='clearfix p20']/p[1]/text()")
         item['company_address'] = replace_all_n(company_address) if len(company_address) != 0 else "空"
         item['job_content'] = replace_all_n("".join(extract("//div[@class='j_cJob_Detail']//p/text()")))
-        item['education'] = extract("//li[@class='cJobDetailInforWd2 marb'][6]/text()")[0]
+        education = extract("//li[@class='cJobDetailInforWd2 marb'][6]/text()")
+        item['education'] = education[0] if len(education) != 0 else "空"
         company_page = extract("//div[@class='cRightTab mt20']/div[@class='clearfix p20']/p[2]/a/text()")
         item['company_homepage'] = replace_all_n(company_page) if len(company_page) != 0 else "空"
         yield item
