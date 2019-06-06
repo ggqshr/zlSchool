@@ -1,1 +1,1 @@
-python3 entrypoint.py
+python36 entrypoint.py
