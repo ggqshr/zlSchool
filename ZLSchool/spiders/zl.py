@@ -99,14 +99,12 @@ class ZlSpider(scrapy.Spider):
                     item['company_nuture'].append("空")
                     item['company_size'].append("空")
         except:
-            from scrapy.shell import inspect_response
-            inspect_response(response, self)
+            pass
         item['id'] = [base64.b32encode((n + c).encode("utf-8")).decode("utf-8") for n, c in
                       zip(item['job_name'], item['company_name'])]
         all_data = [{key: item[key][index] for key in item.keys()} for index in range(len(item['id']))]
         for data in all_data:
-            yield Request(
-                url=data['link'],
+            yield Request(             url=data['link'],
                 headers=self.COMMON_HEADER,
                 meta={"item": data},
                 callback=self.get_other

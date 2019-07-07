@@ -23,10 +23,10 @@ class ZlschoolPipeline(object):
         self.count = 0
 
     def process_item(self, item, spider):
+        self.count += 1
         if self.client.sadd("ZL_set", item['id']) == 0:
             return item
         self.mongo.insert_one(dict(item))
-        self.count += 1
         return item
 
     def close_spider(self, spider):
