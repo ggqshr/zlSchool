@@ -99,20 +99,22 @@ class ZlSpider(scrapy.Spider):
                     item['company_nuture'].append("空")
                     item['company_size'].append("空")
         except:
+            # from scrapy.shell import inspect_response
+            # inspect_response(response, self)
             pass
         item['id'] = [base64.b32encode((n + c).encode("utf-8")).decode("utf-8") for n, c in
                       zip(item['job_name'], item['company_name'])]
         all_data = [{key: item[key][index] for key in item.keys()} for index in range(len(item['id']))]
         for data in all_data:
-            yield Request(             url=data['link'],
-                headers=self.COMMON_HEADER,
+            yield Request(
+                url=data['link'],
                 meta={"item": data},
                 callback=self.get_other
             )
 
-    def get_other(self, response):
-        item = ZlschoolItem(response.meta['item'])
-        extract = partial(extract_info, response)
+    def get_other(self, res):
+        item = ZlschoolItem(res.meta['item'])
+        extract = partial(extract_info, res)
         item['post_time'] = extract("//li[@id='liJobPublishDate']/text()")[0]
         item['job_place'] = extract("//li[@id='currentJobCity']/@title")[0]
         item['job_nature'] = extract("//li[@class='cJobDetailInforWd2 marb'][5]/text()")[0]
