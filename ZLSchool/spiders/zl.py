@@ -115,14 +115,14 @@ class ZlSpider(scrapy.Spider):
     def get_other(self, res):
         item = ZlschoolItem(res.meta['item'])
         extract = partial(extract_info, res)
-        item['post_time'] = extract("//li[@id='liJobPublishDate']/text()")[0]
-        item['job_place'] = extract("//li[@id='currentJobCity']/@title")[0]
-        item['job_nature'] = extract("//li[@class='cJobDetailInforWd2 marb'][5]/text()")[0]
-        company_address = extract("//div[@class='cRightTab mt20']/div[@class='clearfix p20']/p[1]/text()")
+        item['post_time'] = extract("//span[@class='time']/text()")[0]
+        item['job_place'] = replace_all_n(extract("string(//span[@class='address'])")[0])
+        item['job_nature'] = replace_all_n(extract("string(//span[@class='position-type'])")[0])
+        company_address = extract("string(//p[@class='company-location commonStyle'])")
         item['company_address'] = replace_all_n(company_address) if len(company_address) != 0 else "空"
-        item['job_content'] = replace_all_n("".join(extract("//div[@class='j_cJob_Detail']//p/text()")))
-        education = extract("//li[@class='cJobDetailInforWd2 marb'][6]/text()")
-        item['education'] = education[0] if len(education) != 0 else "空"
-        company_page = extract("//div[@class='cRightTab mt20']/div[@class='clearfix p20']/p[2]/a/text()")
+        item['job_content'] = replace_all_n("".join(extract("string(//div[@class='describe'])")))
+        education = extract("string(//span[@class='edu-level'])")
+        item['education'] = replace_all_n(education[0]) if len(education) != 0 else "空"
+        company_page = extract("string(//p[@class='company-domain commonStyle'])")
         item['company_homepage'] = replace_all_n(company_page) if len(company_page) != 0 else "空"
         yield item
