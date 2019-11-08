@@ -10,6 +10,7 @@ from scrapy import Request
 
 from ZLSchool import ZlschoolItem
 from ZLSchool.settings import USER_AGENT_POOL
+from datetime import datetime
 
 regSpace = re.compile(r'([\s\r\n\t])+')
 
@@ -17,6 +18,9 @@ regSpace = re.compile(r'([\s\r\n\t])+')
 def extract_info(response, xp):
     return response.xpath(xp).extract()
 
+def parse_time(time_str):
+    time = datetime.strptime(time_str,"%Y-%m-%d")
+    return time.strftime("%Y-%m-%d")
 
 # 去掉多余的符号
 def replace_all_n(text):
@@ -115,7 +119,7 @@ class ZlSpider(scrapy.Spider):
     def get_other(self, res):
         item = ZlschoolItem(res.meta['item'])
         extract = partial(extract_info, res)
-        item['post_time'] = extract("//span[@class='time']/text()")[0]
+        item['post_time'] = parse_time(extract("//span[@class='time']/text()")[0])
         item['job_place'] = replace_all_n(extract("string(//span[@class='address'])")[0])
         item['job_nature'] = replace_all_n(extract("string(//span[@class='position-type'])")[0])
         company_address = extract("string(//p[@class='company-location commonStyle'])")
