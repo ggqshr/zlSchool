@@ -7,6 +7,7 @@ from functools import partial
 import re
 
 from scrapy import Request
+from scrapy_splash import SplashRequest
 
 from ZLSchool import ZlschoolItem
 from ZLSchool.settings import USER_AGENT_POOL
@@ -110,10 +111,12 @@ class ZlSpider(scrapy.Spider):
                       zip(item['job_name'], item['company_name'])]
         all_data = [{key: item[key][index] for key in item.keys()} for index in range(len(item['id']))]
         for data in all_data:
-            yield Request(
+            yield SplashRequest(
                 url=data['link'],
                 meta={"item": data},
-                callback=self.get_other
+                callback=self.get_other,
+                # headers=self.COMMON_HEADER,
+                args={'wait': 3,'images': 0, 'timeout': 15}
             )
 
     def get_other(self, res):
