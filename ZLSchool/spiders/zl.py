@@ -116,7 +116,7 @@ class ZlSpider(scrapy.Spider):
                 meta={"item": data},
                 callback=self.get_other,
                 # headers=self.COMMON_HEADER,
-                args={'wait': 3,'images': 0, 'timeout': 15}
+                args={'wait': 3,'images': 0,}
             )
 
     def get_other(self, res):
